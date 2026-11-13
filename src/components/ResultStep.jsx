@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 const REVIEW_LOW = 0.55;
 
 function faceVerdict({ distance, verified }) {
@@ -35,25 +37,19 @@ const FIELD_LABELS = {
   mrz_type: "MRZ type",
 };
 
-export default function ResultStep({
-  docResult,
-  livenessDone,
-  faceResult,
-  onRestart,
-}) {
+export default function ResultStep({ docResult, faceResult, onRestart }) {
   const verdict = faceVerdict(faceResult);
-  const overallTone =
-    livenessDone && faceResult.verified
-      ? verdict.tone === "review"
-        ? "review"
-        : "pass"
-      : "fail";
+  const overallTone = faceResult.verified
+    ? verdict.tone === "review"
+      ? "review"
+      : "pass"
+    : "fail";
   const overallLabel =
     overallTone === "pass"
-      ? "Verified"
+      ? "Identity Verified"
       : overallTone === "review"
-        ? "Needs manual review"
-        : "Verification failed";
+        ? "Manual Review"
+        : "Verification Failed";
 
   const fields = docResult.fields || {};
   const shownFields = Object.entries(fields).filter(([k]) =>
@@ -75,23 +71,12 @@ export default function ResultStep({
           {faceResult.distance.toFixed(4)} (threshold{" "}
           {faceResult.threshold.toFixed(2)})
         </dd>
-        <dt>Decision</dt>
-        <dd>{verdict.label}</dd>
+        <dt>Liveness</dt>
+        <dd>✅ Passed (Camera)</dd>
       </div>
-
-      <h3>Liveness</h3>
-      <p className="muted" style={{ margin: "4px 0 16px" }}>
-        {livenessDone ? "✅ Confirmed on desktop" : "❌ Not completed"}
-      </p>
 
       <h3>Document — {docResult.doc_type.toUpperCase()}</h3>
       <dl className="kv">
-        {shownFields.length === 0 && (
-          <>
-            <dt>Status</dt>
-            <dd>{fields.status || "unknown"}</dd>
-          </>
-        )}
         {shownFields.map(([key, value]) => (
           <Fragment key={key}>
             <dt>{FIELD_LABELS[key]}</dt>
@@ -106,5 +91,3 @@ export default function ResultStep({
     </section>
   );
 }
-
-import { Fragment } from "react";

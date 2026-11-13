@@ -6,10 +6,6 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
   const [error, setError] = useState("");
 
   const submit = async () => {
-    if (!selfieFile) {
-      setError("No selfie captured from liveness step.");
-      return;
-    }
     setBusy(true);
     setError("");
     try {
@@ -25,31 +21,58 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
 
   return (
     <section className="card">
-      <h2>3. Face match</h2>
-      <div className="face-preview">
-        {docResult.face_image_b64 ? (
-          <img
-            src={`data:image/jpeg;base64,${docResult.face_image_b64}`}
-            alt="ID face"
-          />
-        ) : (
-          <div className="no-face">No face on document</div>
-        )}
-        {selfieFile && (
-          <img src={URL.createObjectURL(selfieFile)} alt="Liveness selfie" />
-        )}
-      </div>
+      <h2>3. Face Match</h2>
       <p className="muted">
         We'll compare your live selfie against the document photo.
       </p>
+
+      <div className="face-preview">
+        {selfieFile && (
+          <div>
+            <p style={{ fontSize: 12, textAlign: "center" }}>Live Selfie</p>
+            <img
+              src={URL.createObjectURL(selfieFile)}
+              alt="Liveness Selfie"
+              style={{
+                width: 120,
+                height: 120,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          </div>
+        )}
+
+        {docResult.face_image_b64 ? (
+          <div>
+            <p style={{ fontSize: 12, textAlign: "center" }}>ID Document</p>
+            <img
+              src={`data:image/jpeg;base64,${docResult.face_image_b64}`}
+              alt="ID Face"
+              style={{
+                width: 120,
+                height: 120,
+                objectFit: "cover",
+                borderRadius: 8,
+              }}
+            />
+          </div>
+        ) : (
+          <div className="no-face">No face detected on document</div>
+        )}
+      </div>
+
       {error && <p className="error">{error}</p>}
-      <button
-        className="primary"
-        onClick={submit}
-        disabled={busy || !selfieFile}
-      >
-        {busy ? "Comparing…" : "Confirm & Verify"}
-      </button>
+
+      <div style={{ marginTop: 16 }}>
+        <button
+          className="primary"
+          onClick={submit}
+          disabled={busy || !docResult.face_image_b64}
+        >
+          {busy ? "Comparing…" : "Confirm Identity"}
+        </button>
+      </div>
     </section>
   );
 }

@@ -1,21 +1,22 @@
 import { useState } from "react";
 import StepIndicator from "./components/StepIndicator";
-import DocumentStep from "./components/DocumentStep";
 import LivenessStep from "./components/LivenessStep";
+import DocumentStep from "./components/DocumentStep";
 import FaceStep from "./components/FaceStep";
 import ResultStep from "./components/ResultStep";
 
+const STEPS = ["Liveness", "Document", "Face Match", "Result"];
+
 export default function App() {
   const [step, setStep] = useState(0);
+  const [selfieFile, setSelfieFile] = useState(null);
   const [docResult, setDocResult] = useState(null);
-  const [livenessDone, setLivenessDone] = useState(false);
   const [faceResult, setFaceResult] = useState(null);
-  const [livenessSelfie, setLivenessSelfie] = useState(null);
 
   const restart = () => {
     setStep(0);
+    setSelfieFile(null);
     setDocResult(null);
-    setLivenessDone(false);
     setFaceResult(null);
   };
 
@@ -23,24 +24,24 @@ export default function App() {
     <main className="app">
       <header>
         <h1>QOS Identity Verification</h1>
-        <p className="muted">NIN / Passport · Liveness · Face match</p>
+        <p className="muted">Liveness → Document → Match</p>
       </header>
 
-      <StepIndicator current={step} />
+      <StepIndicator current={step} steps={STEPS} />
 
       {step === 0 && (
-        <DocumentStep
-          onDone={(res) => {
-            setDocResult(res);
+        <LivenessStep
+          onDone={(selfie) => {
+            setSelfieFile(selfie);
             setStep(1);
           }}
         />
       )}
 
       {step === 1 && (
-        <LivenessStep
-          onDone={(selfieFile) => {
-            setLivenessSelfie(selfieFile);
+        <DocumentStep
+          onDone={(res) => {
+            setDocResult(res);
             setStep(2);
           }}
         />
@@ -49,6 +50,7 @@ export default function App() {
       {step === 2 && (
         <FaceStep
           docResult={docResult}
+          selfieFile={selfieFile}
           onDone={(res) => {
             setFaceResult(res);
             setStep(3);
@@ -59,7 +61,6 @@ export default function App() {
       {step === 3 && (
         <ResultStep
           docResult={docResult}
-          livenessDone={livenessDone}
           faceResult={faceResult}
           onRestart={restart}
         />
