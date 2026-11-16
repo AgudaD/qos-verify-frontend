@@ -110,7 +110,7 @@ export default function FaceStep({ onDone }) {
       <div style={{ textAlign: "center", marginBottom: 16 }}>
         {!isCameraOn && !selfie && (
           <button className="primary" onClick={startCamera}>
-            Turn On Camera
+            Take Picture
           </button>
         )}
 
