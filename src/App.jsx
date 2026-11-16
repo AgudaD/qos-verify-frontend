@@ -4,17 +4,15 @@ import FaceStep from "./components/FaceStep";
 import LivenessStep from "./components/LivenessStep";
 import ResultStep from "./components/ResultStep";
 
-// New Order based on PM feedback
-const STEPS = ["Upload ID", "Face Check", "Liveness", "Result"];
+// Final Flow: Identity Check -> Liveness
+const STEPS = ["Face Check", "Liveness", "Result"];
 
 export default function App() {
   const [step, setStep] = useState(0);
-  const [docResult, setDocResult] = useState(null);
   const [faceResult, setFaceResult] = useState(null);
 
   const restart = () => {
     setStep(0);
-    setDocResult(null);
     setFaceResult(null);
   };
 
@@ -27,50 +25,32 @@ export default function App() {
 
       <StepIndicator current={step} steps={STEPS} />
 
-      {/* Step 1: Upload ID to simulate DB fetch */}
+      {/* Step 1: Identity Check (Face Match against Mock DB) */}
       {step === 0 && (
-        <DocumentStep
-          onDone={(res) => {
-            setDocResult(res);
-            setStep(1);
-          }}
-        />
-      )}
-
-      {/* Step 2: Take a selfie and compare to ID */}
-      {step === 1 && (
         <FaceStep
-          docResult={docResult}
           onDone={(res) => {
             if (!res.verified) {
-              // If face doesn't match, we don't proceed to liveness!
-              // You can add a "Failed" screen here later.
-              alert("Face does not match the database record. Access denied.");
+              // If face doesn't match, we don't proceed to liveness
+              alert("Face does not match the account owner. Access denied.");
               return;
             }
             setFaceResult(res);
-            setStep(2); // Only proceed if face matches
+            setStep(1); // Only proceed if face matches
           }}
         />
       )}
 
-      {/* Step 3: Liveness Check */}
-      {step === 2 && (
+      {/* Step 2: Liveness Check */}
+      {step === 1 && (
         <LivenessStep
           onDone={() => {
-            setStep(3);
+            setStep(2);
           }}
         />
       )}
 
-      {/* Step 4: Final Result */}
-      {step === 3 && (
-        <ResultStep
-          docResult={docResult}
-          faceResult={faceResult}
-          onRestart={restart}
-        />
-      )}
+      {/* Step 3: Final Result */}
+      {step === 2 && <ResultStep faceResult={faceResult} onRestart={restart} />}
     </main>
   );
 }

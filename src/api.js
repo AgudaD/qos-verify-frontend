@@ -1,6 +1,6 @@
 export async function verifyFace(userId, selfieFile) {
   const fd = new FormData();
-  fd.append("user_id", userId); // Send the mocked user ID
+  fd.append("user_id", userId);
   fd.append("selfie", selfieFile);
 
   const res = await fetch(`${BASE}/verify/face`, {
