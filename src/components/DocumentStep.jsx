@@ -1,35 +1,26 @@
-import { useRef, useState } from "react";
+import { useState, useRef } from "react"; // Add useRef
 import { verifyDocument } from "../api";
-
-const HINTS = {
-  nin: "Place your NIN slip or card flat. Ensure the text is sharp, well-lit, and the whole card is in frame.",
-  passport:
-    "Photograph the passport's identity page. The two MRZ lines at the bottom must be fully in frame, well-lit, and not angled.",
-};
 
 export default function DocumentStep({ onDone }) {
   const [docType, setDocType] = useState("nin");
   const [file, setFile] = useState(null);
-  const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const inputRef = useRef(null);
+  const inputRef = useRef(null); // Add this
 
-  const pick = (f) => {
-    setFile(f);
+  const handleTypeChange = (type) => {
+    setDocType(type);
+    setFile(null);
     setError("");
-  };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    const f = e.dataTransfer.files?.[0];
-    if (f) pick(f);
+    // Reset the file input so it doesn't get stuck if they cancelled previously
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   const submit = async () => {
     if (!file) {
-      setError("Choose a document image first.");
+      setError("Please select an image first.");
       return;
     }
     setBusy(true);
@@ -38,20 +29,17 @@ export default function DocumentStep({ onDone }) {
       const res = await verifyDocument(file, docType);
       const status = res.fields?.status;
       if (status && status !== "SUCCESS") {
-        const detail =
+        setError(
           res.fields?.error ||
-          res.fields?.status_message ||
-          "We could not read this document.";
-        console.error("Document extraction failed:", res.fields);
-        setError(`${detail} — ${HINTS[docType]}`);
+            res.fields?.status_message ||
+            "Could not read document.",
+        );
         return;
       }
       onDone(res);
     } catch (err) {
       console.error(err);
-      setError(
-        err.message || "Document verification failed. Please try again.",
-      );
+      setError(err.message || "Verification failed.");
     } finally {
       setBusy(false);
     }
@@ -59,7 +47,7 @@ export default function DocumentStep({ onDone }) {
 
   return (
     <section className="card">
-      <h2>1. Upload identity document</h2>
+      <h2>2. Upload Document</h2>
 
       <div className="row">
         <label className={`pill ${docType === "nin" ? "selected" : ""}`}>
@@ -67,7 +55,7 @@ export default function DocumentStep({ onDone }) {
             type="radio"
             name="docType"
             checked={docType === "nin"}
-            onChange={() => setDocType("nin")}
+            onChange={() => handleTypeChange("nin")}
           />
           NIN
         </label>
@@ -76,57 +64,35 @@ export default function DocumentStep({ onDone }) {
             type="radio"
             name="docType"
             checked={docType === "passport"}
-            onChange={() => setDocType("passport")}
+            onChange={() => handleTypeChange("passport")}
           />
           Passport
         </label>
       </div>
 
-      <div
-        className={`dropzone ${dragging ? "dragging" : ""}`}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragging(true);
+      <input
+        ref={inputRef} // Attach the ref
+        type="file"
+        accept="image/*,.pdf"
+        style={{ display: "block", margin: "16px 0" }}
+        onChange={(e) => {
+          setFile(e.target.files?.[0] || null);
+          setError("");
         }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
-        onClick={() => inputRef.current?.click()}
-      >
-        <p>
-          <strong>Drop your image here</strong> or click to browse
-        </p>
-        <p className="muted">JPG, PNG, or PDF. Single page for PDFs.</p>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*,.pdf"
-          style={{ display: "none" }}
-          onChange={(e) => pick(e.target.files?.[0] || null)}
-        />
-      </div>
+      />
 
       {file && (
         <div className="file-preview">
           <span>📄 {file.name}</span>
           <span className="muted">({(file.size / 1024).toFixed(0)} KB)</span>
-          <button
-            className="secondary"
-            style={{ marginLeft: "auto" }}
-            onClick={() => pick(null)}
-            type="button"
-          >
-            Change
-          </button>
         </div>
       )}
 
       {error && <p className="error">{error}</p>}
 
-      <div style={{ marginTop: 16 }}>
-        <button className="primary" onClick={submit} disabled={busy || !file}>
-          {busy ? "Extracting…" : "Extract & Verify"}
-        </button>
-      </div>
+      <button className="primary" onClick={submit} disabled={busy || !file}>
+        {busy ? "Extracting…" : "Extract & Verify"}
+      </button>
     </section>
   );
 }
