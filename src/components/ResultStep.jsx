@@ -6,11 +6,7 @@ function faceVerdict({ distance, verified }) {
   return { tone: "fail", label: "No match" };
 }
 
-function confidence(distance) {
-  return `${Math.max(0, Math.min(100, Math.round((1 - distance) * 100)))}%`;
-}
-
-export default function ResultStep({ nin, faceResult, onRestart }) {
+export default function ResultStep({ faceResult, onRestart }) {
   const verdict = faceVerdict(faceResult);
   const overallTone = faceResult.verified
     ? verdict.tone === "review"
@@ -31,16 +27,13 @@ export default function ResultStep({ nin, faceResult, onRestart }) {
       <div className={`verdict ${overallTone}`}>{overallLabel}</div>
 
       <dl className="kv">
-        <dt>Merchant NIN</dt>
-        <dd>{nin}</dd>
-        <dt>Confidence</dt>
-        <dd>{confidence(faceResult.distance)}</dd>
-        <dt>Distance</dt>
-        <dd>
-          {faceResult.distance.toFixed(4)} (threshold{" "}
-          {faceResult.threshold.toFixed(2)})
-        </dd>
-        <dt>Liveness</dt>
+        <dt>Face Match Decision</dt>
+        <dd>{verdict.label}</dd>
+        <dt>Distance Score</dt>
+        <dd>{faceResult.distance.toFixed(4)}</dd>
+        <dt>Acceptance Threshold</dt>
+        <dd>{faceResult.threshold.toFixed(2)}</dd>
+        <dt>Liveness Status</dt>
         <dd>✅ Passed (Camera)</dd>
       </dl>
 
