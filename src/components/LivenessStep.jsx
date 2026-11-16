@@ -12,7 +12,7 @@ export default function LivenessStep({ onDone }) {
       </p>
 
       <LivenessCheck
-        challengeCount={2}
+        numberOfChallenge={2}
         onComplete={async (passed, results, frame) => {
           if (passed) {
             onDone();
