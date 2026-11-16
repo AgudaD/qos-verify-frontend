@@ -54,7 +54,7 @@ export default function LivenessStep({ onDone }) {
         Complete the challenges to prove you are physically here.
       </p>
 
-      <LivenessCheck numberOfChallenge={3} onComplete={handleComplete} />
+      <LivenessCheck numberOfChallenge={1} onComplete={handleComplete} />
 
       {busy && (
         <p style={{ fontWeight: "bold", color: "#F59E0B", marginTop: 16 }}>
