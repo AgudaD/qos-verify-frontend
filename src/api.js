@@ -5,13 +5,13 @@ export async function verifyFace(userId, selfieFile) {
   fd.append("user_id", userId);
   fd.append("selfie", selfieFile);
 
-  const res = await fetch(`${BASE}/verify/face`, {
-    method: "POST",
-    body: fd,
-    headers: {
-      "ngrok-skip-browser-warning": "true",
+  const res = await fetch(
+    `${BASE}/verify/face?ngrok-skip-browser-warning=true`,
+    {
+      method: "POST",
+      body: fd,
     },
-  });
+  );
 
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
