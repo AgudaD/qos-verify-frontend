@@ -29,12 +29,12 @@ export default function ResultStep({ faceResult, onRestart }) {
       <dl className="kv">
         <dt>Face Match Decision</dt>
         <dd>{verdict.label}</dd>
-        <dt>Distance Score</dt>
+        <dt>Distance</dt>
         <dd>{faceResult.distance.toFixed(4)}</dd>
-        <dt>Acceptance Threshold</dt>
+        <dt>Threshold</dt>
         <dd>{faceResult.threshold.toFixed(2)}</dd>
         <dt>Liveness Status</dt>
-        <dd>✅ Passed (Camera)</dd>
+        <dd>✅ Passed</dd>
       </dl>
 
       <button className="primary" onClick={onRestart} style={{ marginTop: 16 }}>

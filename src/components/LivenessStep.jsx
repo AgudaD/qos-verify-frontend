@@ -1,6 +1,47 @@
 import { useState } from "react";
 import { LivenessCheck } from "@kloudlot/react-liveness";
 
+const MY_CHALLENGES = [
+  {
+    type: "BLINK",
+    label: "Blink",
+    instruction: "Blink both eyes",
+    icon: "👁️",
+    timeoutMs: 5000,
+    blendshapes: [
+      { key: "eyeBlinkLeft", threshold: 0.5 },
+      { key: "eyeBlinkRight", threshold: 0.5 },
+    ],
+  },
+  {
+    type: "SMILE",
+    label: "Smile",
+    instruction: "Give us a big smile",
+    icon: "😊",
+    timeoutMs: 5000,
+    blendshapes: [
+      { key: "mouthSmileLeft", threshold: 0.4 },
+      { key: "mouthSmileRight", threshold: 0.4 },
+    ],
+  },
+  {
+    type: "TURN_LEFT",
+    label: "Turn Left",
+    instruction: "Turn your head left",
+    icon: "👈",
+    timeoutMs: 5000,
+    blendshapes: [{ key: "headYaw", threshold: 0.3 }],
+  }, // Note: check exact blendshape key for turn
+  {
+    type: "TURN_RIGHT",
+    label: "Turn Right",
+    instruction: "Turn your head right",
+    icon: "👉",
+    timeoutMs: 5000,
+    blendshapes: [{ key: "headYaw", threshold: -0.3 }],
+  },
+];
+
 export default function LivenessStep({ onDone }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -54,7 +95,11 @@ export default function LivenessStep({ onDone }) {
         Complete the challenges to prove you are physically here.
       </p>
 
-      <LivenessCheck numberOfChallenge={1} onComplete={handleComplete} />
+      <LivenessCheck
+        numberOfChallenge={2}
+        challengePool={MY_CHALLENGES}
+        onComplete={handleComplete}
+      />
 
       {busy && (
         <p style={{ fontWeight: "bold", color: "#F59E0B", marginTop: 16 }}>
