@@ -12,7 +12,12 @@ export default function LivenessStep({ onDone }) {
       </p>
 
       <LivenessCheck
-        numberOfChallenge={2}
+        numberOfChallenge={3}
+        theme={{
+          primary: "#F59E0B",
+          primaryText: "#ffffff",
+          secondary: "#fcd34d",
+        }}
         onComplete={async (passed, results, frame) => {
           if (passed) {
             onDone();
