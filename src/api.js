@@ -8,6 +8,9 @@ export async function verifyFace(userId, selfieFile) {
   const res = await fetch(`${BASE}/verify/face`, {
     method: "POST",
     body: fd,
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
   });
 
   const body = await res.json().catch(() => ({}));
