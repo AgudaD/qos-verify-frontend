@@ -1,6 +1,5 @@
 import { useState } from "react";
 import StepIndicator from "./components/StepIndicator";
-import DocumentStep from "./components/DocumentStep";
 import FaceStep from "./components/FaceStep";
 import LivenessStep from "./components/LivenessStep";
 import ResultStep from "./components/ResultStep";
