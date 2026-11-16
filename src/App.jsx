@@ -4,8 +4,7 @@ import FaceStep from "./components/FaceStep";
 import LivenessStep from "./components/LivenessStep";
 import ResultStep from "./components/ResultStep";
 
-// Final Flow: Identity Check -> Liveness
-const STEPS = ["Face Check", "Liveness", "Result"];
+const STEPS = ["Identity Check", "Liveness", "Result"];
 
 export default function App() {
   const [step, setStep] = useState(0);
@@ -19,7 +18,7 @@ export default function App() {
   return (
     <main className="app">
       <header>
-        <h1>QOS Identity Check</h1>
+        <h1 style={{ color: "#F59E0B" }}>QOS Identity Check</h1>
         <p className="muted">Identity Match → Liveness</p>
       </header>
 

@@ -6,7 +6,7 @@ export default function LivenessStep({ onDone }) {
 
   return (
     <section className="card">
-      <h2>3. Liveness Check</h2>
+      <h2>2. Liveness Check</h2>
       <p className="muted">
         Complete the challenge to prove you are physically here.
       </p>

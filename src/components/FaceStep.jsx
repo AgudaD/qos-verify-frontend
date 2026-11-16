@@ -80,7 +80,7 @@ export default function FaceStep({ onDone }) {
 
   return (
     <section className="card">
-      <h2>2. Identity Check</h2>
+      <h2>1. Identity Check</h2>
       <p className="muted">
         Take a selfie to verify you are the account owner.
       </p>
