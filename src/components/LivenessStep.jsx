@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LivenessCheck } from "@kloudlot/react-liveness"; // or whichever library you are using
+import { LivenessCheck } from "@kloudlot/react-liveness";
 
 export default function LivenessStep({ onDone }) {
   const [error, setError] = useState("");
@@ -12,10 +12,10 @@ export default function LivenessStep({ onDone }) {
       </p>
 
       <LivenessCheck
-        challengeCount={3}
+        challengeCount={2}
         onComplete={async (passed, results, frame) => {
           if (passed) {
-            onDone(); // Move to result
+            onDone();
           } else {
             setError("Liveness check failed. Please try again.");
           }
