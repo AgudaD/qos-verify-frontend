@@ -1,4 +1,4 @@
-const STEPS = ["Liveness", "Document", "Face Match", "Result"];
+const STEPS = ["Liveness", "Face Match", "Result"];
 
 export default function StepIndicator({ current }) {
   return (

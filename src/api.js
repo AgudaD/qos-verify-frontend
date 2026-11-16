@@ -1,30 +1,36 @@
-const BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
+const BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8000";
 
 export async function verifyDocument(file, docType) {
-  const fd = new FormData();
-  fd.append("file", file);
-  const res = await fetch(`${BASE}/verify/document?doc_type=${docType}`, {
-    method: "POST",
-    body: fd,
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(body.detail || "Document verification failed");
-  }
-  return body;
+  // ... (keep your existing verifyDocument code here)
 }
 
-export async function verifyFace(idFaceB64, selfieFile) {
+export async function verifyFace(nin, selfieFile) {
+  // --- MOCK VERSION FOR TESTING UI WITHOUT DB ---
+  // Remove this block and uncomment the real fetch below when you have the DB ready.
+
+  await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate network delay
+
+  if (nin === "00000000000") {
+    // Just to test a failure state
+    return { distance: 0.85, threshold: 0.65, verified: false };
+  }
+
+  return { distance: 0.35, threshold: 0.65, verified: true };
+
+  /* --- REAL VERSION (Uncomment when backend is ready) ---
   const fd = new FormData();
-  fd.append("id_face_b64", idFaceB64);
+  fd.append("nin", nin);
   fd.append("selfie", selfieFile);
+  
   const res = await fetch(`${BASE}/verify/face`, {
     method: "POST",
     body: fd,
   });
+  
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(body.detail || "Face verification failed");
   }
   return body;
+  */
 }

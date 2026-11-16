@@ -1,16 +1,21 @@
 import { useState } from "react";
 import { verifyFace } from "../api";
 
-export default function FaceStep({ docResult, selfieFile, onDone }) {
+export default function FaceStep({ selfieFile, onDone }) {
+  const [nin, setNin] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   const submit = async () => {
+    if (!nin || nin.length < 11) {
+      setError("Please enter a valid 11-digit NIN.");
+      return;
+    }
     setBusy(true);
     setError("");
     try {
-      const res = await verifyFace(docResult.face_image_b64, selfieFile);
-      onDone(res);
+      const res = await verifyFace(nin, selfieFile);
+      onDone(res, nin);
     } catch (err) {
       console.error(err);
       setError(err.message || "Face comparison failed.");
@@ -21,58 +26,58 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
 
   return (
     <section className="card">
-      <h2>3. Face Match</h2>
+      <h2>2. Merchant Face Match</h2>
       <p className="muted">
-        We'll compare your live selfie against the document photo.
+        Enter the merchant's NIN to verify against their onboarding record.
       </p>
+
+      <div style={{ marginBottom: 16 }}>
+        <input
+          type="text"
+          placeholder="e.g. 12345678901"
+          value={nin}
+          onChange={(e) => setNin(e.target.value.replace(/\D/g, ""))}
+          maxLength={11}
+          style={{
+            padding: "12px",
+            width: "100%",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            fontSize: "16px",
+          }}
+        />
+      </div>
 
       <div className="face-preview">
         {selfieFile && (
           <div>
-            <p style={{ fontSize: 12, textAlign: "center" }}>Live Selfie</p>
+            <p style={{ fontSize: 12, textAlign: "center", marginBottom: 4 }}>
+              Live Liveness Capture
+            </p>
             <img
               src={URL.createObjectURL(selfieFile)}
-              alt="Liveness Selfie"
+              alt="Selfie"
               style={{
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 objectFit: "cover",
                 borderRadius: 8,
+                border: "2px solid #22c55e",
               }}
             />
           </div>
-        )}
-
-        {docResult.face_image_b64 ? (
-          <div>
-            <p style={{ fontSize: 12, textAlign: "center" }}>ID Document</p>
-            <img
-              src={`data:image/jpeg;base64,${docResult.face_image_b64}`}
-              alt="ID Face"
-              style={{
-                width: 120,
-                height: 120,
-                objectFit: "cover",
-                borderRadius: 8,
-              }}
-            />
-          </div>
-        ) : (
-          <div className="no-face">No face detected on document</div>
         )}
       </div>
 
       {error && <p className="error">{error}</p>}
 
-      <div style={{ marginTop: 16 }}>
-        <button
-          className="primary"
-          onClick={submit}
-          disabled={busy || !docResult.face_image_b64}
-        >
-          {busy ? "Comparing…" : "Confirm Identity"}
-        </button>
-      </div>
+      <button
+        className="primary"
+        onClick={submit}
+        disabled={busy || !selfieFile || nin.length !== 11}
+      >
+        {busy ? "Searching DB & Matching…" : "Verify Identity"}
+      </button>
     </section>
   );
 }
