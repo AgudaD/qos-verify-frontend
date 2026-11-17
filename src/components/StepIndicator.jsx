@@ -1,9 +1,7 @@
-const STEPS = ["Identity Check", "Liveness", "Result"];
-
-export default function StepIndicator({ current }) {
+export default function StepIndicator({ current, steps }) {
   return (
     <ol className="steps">
-      {STEPS.map((label, i) => (
+      {steps.map((label, i) => (
         <li
           key={label}
           className={i === current ? "active" : i < current ? "done" : ""}
