@@ -272,3 +272,42 @@ header h1 {
   font-weight: 500;
   word-break: break-word;
 }
+
+/* --- Liveness library theme overrides --- */
+
+/* Force all text inside the liveness widget to white */
+[class*="liveness"] *,
+[class*="Liveness"] *,
+[data-testid*="liveness"] * {
+  color: #ffffff !important;
+}
+
+/* Keep the primary button text dark/black so it reads on Amber */
+[class*="liveness"] button,
+[class*="Liveness"] button,
+[data-testid*="liveness"] button {
+  color: #111111 !important;
+  font-weight: 700 !important;
+}
+
+/* If the library uses SVG icons (eye, checkmark) force them white too */
+[class*="liveness"] svg,
+[class*="Liveness"] svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* The Start button's background should be amber */
+[class*="liveness"] button[class*="primary"],
+[class*="Liveness"] button[class*="primary"] {
+  background-color: #f59e0b !important;
+  border-color: #f59e0b !important;
+}
+
+/* Ring / progress stroke color */
+[class*="liveness"] circle[class*="progress"],
+[class*="liveness"] [class*="ring"] path,
+[class*="liveness"] [class*="progress"] path {
+  stroke: #f59e0b !important;
+}

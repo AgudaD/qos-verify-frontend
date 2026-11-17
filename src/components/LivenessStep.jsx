@@ -77,8 +77,9 @@ export default function LivenessStep({ userId, setUserId, onDone }) {
           primary: "#F59E0B",
           primaryText: "#ffffff",
           secondary: "#FCD34D",
-          background: "#ffffff",
-          text: "#1a1a1a",
+          background: "#1a1a1a",
+          text: "#ffffff",
+          textColor: "#ffffff",
         }}
       />
 
