@@ -3,6 +3,47 @@ import { LivenessCheck } from "@kloudlot/react-liveness";
 
 const BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8001";
 
+const SLOW_CHALLENGES = [
+  {
+    type: "BLINK",
+    label: "Blink",
+    instruction: "Blink both eyes slowly",
+    icon: "👁️",
+    timeoutMs: 8000,
+    blendshapes: [
+      { key: "eyeBlinkLeft", threshold: 0.5 },
+      { key: "eyeBlinkRight", threshold: 0.5 },
+    ],
+  },
+  {
+    type: "SMILE",
+    label: "Smile",
+    instruction: "Give us a big smile",
+    icon: "😊",
+    timeoutMs: 8000,
+    blendshapes: [
+      { key: "mouthSmileLeft", threshold: 0.4 },
+      { key: "mouthSmileRight", threshold: 0.4 },
+    ],
+  },
+  {
+    type: "TURN_LEFT",
+    label: "Turn Left",
+    instruction: "Slowly turn your head left",
+    icon: "👈",
+    timeoutMs: 8000,
+    blendshapes: [{ key: "headYaw", threshold: 0.3 }],
+  },
+  {
+    type: "TURN_RIGHT",
+    label: "Turn Right",
+    instruction: "Slowly turn your head right",
+    icon: "👉",
+    timeoutMs: 8000,
+    blendshapes: [{ key: "headYaw", threshold: -0.3 }],
+  },
+];
+
 export default function LivenessStep({ userId, setUserId, onDone }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -73,6 +114,7 @@ export default function LivenessStep({ userId, setUserId, onDone }) {
 
       <LivenessCheck
         numberOfChallenge={3}
+        challengePool={SLOW_CHALLENGES}
         onComplete={handleComplete}
         theme={{
           primary: "#F59E0B",
