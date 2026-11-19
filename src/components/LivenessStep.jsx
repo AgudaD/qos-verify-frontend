@@ -67,6 +67,7 @@ export default function LivenessStep({ userId, setUserId, onDone }) {
         >
           <option value="user_aguda">Aguda (You)</option>
           <option value="user_izik">Izik (Product Manager)</option>
+          <option value="user_easynet">Easynet(Devops Engineer)</option>
         </select>
       </div>
 

@@ -6,8 +6,12 @@ export default function FaceStep({ userId, selfieFile, onDone }) {
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
 
-  // Determine which DB image to show based on the user ID
-  const dbImageSrc = userId === "user_izik" ? "/izik.jpeg" : "/aguda.jpeg";
+  const DB_IMAGES = {
+    user_aguda: "/aguda.jpeg",
+    user_izik: "/izik.jpeg",
+    user_tunde: "/tunde.jpeg",
+  };
+  const dbImageSrc = DB_IMAGES[userId] || "/aguda.jpeg";
 
   useEffect(() => {
     let cancelled = false;
