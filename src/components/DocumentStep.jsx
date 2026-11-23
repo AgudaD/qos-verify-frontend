@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"; // Add useRef
+import { useState, useRef } from "react";
 import { verifyDocument } from "../api";
 
 export default function DocumentStep({ onDone }) {
@@ -6,23 +6,22 @@ export default function DocumentStep({ onDone }) {
   const [file, setFile] = useState(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const inputRef = useRef(null); // Add this
+  const [inputKey, setInputKey] = useState(0);
+  const inputRef = useRef(null);
+
+  const resetInput = () => {
+    setFile(null);
+    setError("");
+    setInputKey((k) => k + 1);
+  };
 
   const handleTypeChange = (type) => {
     setDocType(type);
-    setFile(null);
-    setError("");
-    // Reset the file input so it doesn't get stuck if they cancelled previously
-    if (inputRef.current) {
-      inputRef.current.value = "";
-    }
+    resetInput();
   };
 
   const submit = async () => {
-    if (!file) {
-      setError("Please select an image first.");
-      return;
-    }
+    if (!file) return setError("Please select an image first.");
     setBusy(true);
     setError("");
     try {
@@ -38,7 +37,6 @@ export default function DocumentStep({ onDone }) {
       }
       onDone(res);
     } catch (err) {
-      console.error(err);
       setError(err.message || "Verification failed.");
     } finally {
       setBusy(false);
@@ -53,7 +51,6 @@ export default function DocumentStep({ onDone }) {
         <label className={`pill ${docType === "nin" ? "selected" : ""}`}>
           <input
             type="radio"
-            name="docType"
             checked={docType === "nin"}
             onChange={() => handleTypeChange("nin")}
           />
@@ -62,7 +59,6 @@ export default function DocumentStep({ onDone }) {
         <label className={`pill ${docType === "passport" ? "selected" : ""}`}>
           <input
             type="radio"
-            name="docType"
             checked={docType === "passport"}
             onChange={() => handleTypeChange("passport")}
           />
@@ -71,6 +67,7 @@ export default function DocumentStep({ onDone }) {
       </div>
 
       <input
+        key={inputKey}
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/heic,image/heif,application/pdf"
@@ -85,6 +82,14 @@ export default function DocumentStep({ onDone }) {
         <div className="file-preview">
           <span>📄 {file.name}</span>
           <span className="muted">({(file.size / 1024).toFixed(0)} KB)</span>
+          <button
+            className="secondary"
+            style={{ marginLeft: "auto" }}
+            onClick={resetInput}
+            type="button"
+          >
+            Change
+          </button>
         </div>
       )}
 
