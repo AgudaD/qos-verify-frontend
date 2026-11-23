@@ -10,8 +10,8 @@ const SLOW_CHALLENGES = [
     icon: "👁️",
     timeoutMs: 8000,
     blendshapes: [
-      { key: "eyeBlinkLeft", threshold: 0.5 },
-      { key: "eyeBlinkRight", threshold: 0.5 },
+      { key: "eyeBlinkLeft", threshold: 0.6 },
+      { key: "eyeBlinkRight", threshold: 0.6 },
     ],
   },
   {
@@ -21,29 +21,30 @@ const SLOW_CHALLENGES = [
     icon: "😊",
     timeoutMs: 8000,
     blendshapes: [
-      { key: "mouthSmileLeft", threshold: 0.4 },
-      { key: "mouthSmileRight", threshold: 0.4 },
+      { key: "mouthSmileLeft", threshold: 0.55 },
+      { key: "mouthSmileRight", threshold: 0.55 },
     ],
   },
   {
     type: "TURN_LEFT",
     label: "Turn Left",
-    instruction: "Slowly turn your head left",
+    instruction: "Slowly turn your head to the LEFT",
     icon: "👈",
     timeoutMs: 8000,
-    blendshapes: [{ key: "headYaw", threshold: 0.3 }],
+    blendshapes: [{ key: "headYaw", threshold: 0.45 }],
   },
   {
     type: "TURN_RIGHT",
     label: "Turn Right",
-    instruction: "Slowly turn your head right",
+    instruction: "Slowly turn your head to the RIGHT",
     icon: "👉",
     timeoutMs: 8000,
-    blendshapes: [{ key: "headYaw", threshold: -0.3 }],
+    blendshapes: [{ key: "headYaw", threshold: -0.45 }],
   },
 ];
 
 export default function LivenessStep({ onDone }) {
+  const [started, setStarted] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -55,7 +56,6 @@ export default function LivenessStep({ onDone }) {
     try {
       const blob = await frame.blob();
       const file = new File([blob], "liveness.jpg", { type: "image/jpeg" });
-
       await verifyLiveness(file);
       onDone(file);
     } catch (err) {
@@ -99,6 +99,9 @@ export default function LivenessStep({ onDone }) {
           background: "#1a1a1a",
           text: "#ffffff",
           textColor: "#ffffff",
+          accent: "#F59E0B",
+          strokeColor: "#F59E0B",
+          circleColor: "#F59E0B",
         }}
       />
 
