@@ -71,9 +71,9 @@ export default function DocumentStep({ onDone }) {
       </div>
 
       <input
-        ref={inputRef} // Attach the ref
+        ref={inputRef}
         type="file"
-        accept="image/*,.pdf"
+        accept="image/jpeg,image/png,image/heic,image/heif,application/pdf"
         style={{ display: "block", margin: "16px 0" }}
         onChange={(e) => {
           setFile(e.target.files?.[0] || null);
