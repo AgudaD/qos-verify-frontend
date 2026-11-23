@@ -31,7 +31,7 @@ const SLOW_CHALLENGES = [
     instruction: "Slowly turn your head to the LEFT",
     icon: "👈",
     timeoutMs: 8000,
-    blendshapes: [{ key: "headYaw", threshold: 0.45 }],
+    blendshapes: [{ key: "headYaw", threshold: 0.3 }],
   },
   {
     type: "TURN_RIGHT",
@@ -39,7 +39,7 @@ const SLOW_CHALLENGES = [
     instruction: "Slowly turn your head to the RIGHT",
     icon: "👉",
     timeoutMs: 8000,
-    blendshapes: [{ key: "headYaw", threshold: -0.45 }],
+    blendshapes: [{ key: "headYaw", threshold: -0.3 }],
   },
 ];
 
