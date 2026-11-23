@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { LivenessCheck } from "@kloudlot/react-liveness";
-
-const BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:8001";
+import { verifyLiveness } from "../api";
 
 const SLOW_CHALLENGES = [
   {
@@ -57,20 +56,7 @@ export default function LivenessStep({ onDone }) {
       const blob = await frame.blob();
       const file = new File([blob], "liveness.jpg", { type: "image/jpeg" });
 
-      const fd = new FormData();
-      fd.append("file", file);
-
-      const res = await fetch(
-        `${BASE}/verify/liveness?ngrok-skip-browser-warning=true`,
-        {
-          method: "POST",
-          body: fd,
-        },
-      );
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok)
-        throw new Error(data.detail || "Liveness verification failed.");
-
+      await verifyLiveness(file);
       onDone(file);
     } catch (err) {
       setError(err.message || "Could not verify liveness.");
