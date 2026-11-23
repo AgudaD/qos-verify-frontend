@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 
 const FIELD_LABELS = {
   surname: "Surname",
@@ -26,6 +26,8 @@ function faceVerdict({ distance, verified }) {
 }
 
 export default function ResultStep({ docResult, faceResult, onRestart }) {
+  const [showDetails, setShowDetails] = useState(false);
+
   const verdict = faceVerdict(faceResult);
   const overallTone = faceResult.verified
     ? verdict.tone === "review"
@@ -59,23 +61,46 @@ export default function ResultStep({ docResult, faceResult, onRestart }) {
         <dd>✅ Passed</dd>
       </dl>
 
-      <h3>Document — {docResult.doc_type?.toUpperCase()}</h3>
-      <dl className="kv">
-        {shownFields.length === 0 && (
-          <>
-            <dt>Status</dt>
-            <dd>{fields.status || "unknown"}</dd>
-          </>
-        )}
-        {shownFields.map(([k, v]) => (
-          <Fragment key={k}>
-            <dt>{FIELD_LABELS[k]}</dt>
-            <dd>{String(v ?? "—")}</dd>
-          </Fragment>
-        ))}
-      </dl>
+      {/* Collapsible Document Details */}
+      <div style={{ marginTop: 24 }}>
+        <button
+          className="secondary"
+          onClick={() => setShowDetails(!showDetails)}
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>
+            {showDetails ? "Hide Document Details" : "Show Document Details"}
+          </span>
+          <span>{showDetails ? "▲" : "▼"}</span>
+        </button>
 
-      <button className="primary" onClick={onRestart} style={{ marginTop: 16 }}>
+        {showDetails && (
+          <div style={{ marginTop: 16, animation: "fadeIn 0.3s ease-in-out" }}>
+            <h3>Document — {docResult.doc_type?.toUpperCase()}</h3>
+            <dl className="kv">
+              {shownFields.length === 0 && (
+                <>
+                  <dt>Status</dt>
+                  <dd>{fields.status || "unknown"}</dd>
+                </>
+              )}
+              {shownFields.map(([k, v]) => (
+                <Fragment key={k}>
+                  <dt>{FIELD_LABELS[k]}</dt>
+                  <dd>{String(v ?? "—")}</dd>
+                </Fragment>
+              ))}
+            </dl>
+          </div>
+        )}
+      </div>
+
+      <button className="primary" onClick={onRestart} style={{ marginTop: 24 }}>
         Start over
       </button>
     </section>
