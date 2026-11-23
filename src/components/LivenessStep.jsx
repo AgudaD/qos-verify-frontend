@@ -65,11 +65,27 @@ export default function LivenessStep({ onDone }) {
     }
   };
 
+  if (!started) {
+    return (
+      <section className="card">
+        <h2>2. Liveness Check</h2>
+        <p className="muted">
+          You'll be asked to perform 3 quick challenges (blink, smile, or turn
+          your head). Each has up to 8 seconds. Read the instruction that
+          appears on screen, then perform the action clearly.
+        </p>
+        <button className="primary" onClick={() => setStarted(true)}>
+          Start Liveness Check
+        </button>
+      </section>
+    );
+  }
+
   return (
     <section className="card">
       <h2>2. Liveness Check</h2>
       <p className="muted">
-        Complete the challenges to prove you are physically present.
+        Follow the on-screen prompts. Hold your face inside the circle.
       </p>
 
       <LivenessCheck
