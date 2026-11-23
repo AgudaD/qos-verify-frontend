@@ -44,15 +44,12 @@ const SLOW_CHALLENGES = [
   },
 ];
 
-export default function LivenessStep({ userId, setUserId, onDone }) {
+export default function LivenessStep({ onDone }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   const handleComplete = async (passed, results, frame) => {
-    if (!passed) {
-      setError("Active challenges failed. Please try again.");
-      return;
-    }
+    if (!passed) return setError("Active challenges failed. Please try again.");
     setBusy(true);
     setError("");
 
@@ -63,20 +60,19 @@ export default function LivenessStep({ userId, setUserId, onDone }) {
       const fd = new FormData();
       fd.append("file", file);
 
-      const res = await fetch(`${BASE}/verify/liveness`, {
-        method: "POST",
-        body: fd,
-      });
-
+      const res = await fetch(
+        `${BASE}/verify/liveness?ngrok-skip-browser-warning=true`,
+        {
+          method: "POST",
+          body: fd,
+        },
+      );
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
+      if (!res.ok)
         throw new Error(data.detail || "Liveness verification failed.");
-      }
 
-      // Pass the SAME frame up — it will be reused for face match
       onDone(file);
     } catch (err) {
-      console.error("Liveness error:", err);
       setError(err.message || "Could not verify liveness.");
     } finally {
       setBusy(false);
@@ -85,32 +81,10 @@ export default function LivenessStep({ userId, setUserId, onDone }) {
 
   return (
     <section className="card">
-      <h2>1. Liveness Check</h2>
+      <h2>2. Liveness Check</h2>
       <p className="muted">
         Complete the challenges to prove you are physically present.
       </p>
-
-      <div style={{ marginBottom: 16 }}>
-        <label
-          style={{ display: "block", marginBottom: 8, fontWeight: "bold" }}
-        >
-          Simulate Logged-in User:
-        </label>
-        <select
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          style={{
-            padding: "10px",
-            width: "100%",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
-        >
-          <option value="user_aguda">Aguda (You)</option>
-          <option value="user_izik">Izik (Product Manager)</option>
-          <option value="user_easynet">Easynet(Devops Engineer)</option>
-        </select>
-      </div>
 
       <LivenessCheck
         numberOfChallenge={3}
@@ -131,7 +105,6 @@ export default function LivenessStep({ userId, setUserId, onDone }) {
           Running server-side anti-spoofing...
         </p>
       )}
-
       {error && <p className="error">{error}</p>}
     </section>
   );

@@ -1,19 +1,21 @@
 import { useState } from "react";
 import StepIndicator from "./components/StepIndicator";
+import DocumentStep from "./components/DocumentStep";
 import LivenessStep from "./components/LivenessStep";
 import FaceStep from "./components/FaceStep";
 import ResultStep from "./components/ResultStep";
 
-const STEPS = ["Liveness", "Face Match", "Result"];
+const STEPS = ["Document", "Liveness", "Face Match", "Result"];
 
 export default function App() {
   const [step, setStep] = useState(0);
+  const [docResult, setDocResult] = useState(null);
   const [selfieFile, setSelfieFile] = useState(null);
   const [faceResult, setFaceResult] = useState(null);
-  const [userId, setUserId] = useState("user_aguda");
 
   const restart = () => {
     setStep(0);
+    setDocResult(null);
     setSelfieFile(null);
     setFaceResult(null);
   };
@@ -22,34 +24,47 @@ export default function App() {
     <main className="app">
       <header>
         <h1>QOS Identity Check</h1>
-        <p className="muted">Liveness → Face Match</p>
+        <p className="muted">Document → Liveness → Face Match</p>
       </header>
 
       <StepIndicator current={step} steps={STEPS} />
 
       {step === 0 && (
-        <LivenessStep
-          userId={userId}
-          setUserId={setUserId}
-          onDone={(frameFile) => {
-            setSelfieFile(frameFile);
+        <DocumentStep
+          onDone={(res) => {
+            setDocResult(res);
             setStep(1);
           }}
         />
       )}
 
       {step === 1 && (
-        <FaceStep
-          userId={userId}
-          selfieFile={selfieFile}
-          onDone={(res) => {
-            setFaceResult(res);
+        <LivenessStep
+          onDone={(frameFile) => {
+            setSelfieFile(frameFile);
             setStep(2);
           }}
         />
       )}
 
-      {step === 2 && <ResultStep faceResult={faceResult} onRestart={restart} />}
+      {step === 2 && (
+        <FaceStep
+          docResult={docResult}
+          selfieFile={selfieFile}
+          onDone={(res) => {
+            setFaceResult(res);
+            setStep(3);
+          }}
+        />
+      )}
+
+      {step === 3 && (
+        <ResultStep
+          docResult={docResult}
+          faceResult={faceResult}
+          onRestart={restart}
+        />
+      )}
     </main>
   );
 }

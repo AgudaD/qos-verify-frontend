@@ -1,17 +1,10 @@
 import { useState, useEffect } from "react";
 import { verifyFace } from "../api";
 
-export default function FaceStep({ userId, selfieFile, onDone }) {
+export default function FaceStep({ docResult, selfieFile, onDone }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
-
-  const DB_IMAGES = {
-    user_aguda: "/aguda.jpeg",
-    user_izik: "/izik.jpeg",
-    user_tunde: "/tunde.jpeg",
-  };
-  const dbImageSrc = DB_IMAGES[userId] || "/aguda.jpeg";
 
   useEffect(() => {
     let cancelled = false;
@@ -20,15 +13,14 @@ export default function FaceStep({ userId, selfieFile, onDone }) {
       setBusy(true);
       setError("");
       try {
-        const res = await verifyFace(userId, selfieFile);
+        const res = await verifyFace(docResult.face_image_b64, selfieFile);
         if (cancelled) return;
         setResult(res);
 
         if (!res.verified) {
-          setError("Face does not match the account owner. Access denied.");
+          setError("Face does not match the document. Access denied.");
           return;
         }
-        // Wait 2 seconds so the user can see the comparison before moving on
         setTimeout(() => onDone(res), 2000);
       } catch (err) {
         if (cancelled) return;
@@ -46,102 +38,112 @@ export default function FaceStep({ userId, selfieFile, onDone }) {
 
   return (
     <section className="card">
-      <h2>2. Face Match</h2>
+      <h2>3. Face Match</h2>
       <p className="muted">
-        Comparing the live liveness frame against the database record...
+        Comparing your live liveness frame against the document photo...
       </p>
 
-      {/* VISUAL COMPARISON: LIVE FRAME vs DATABASE */}
       <div
         style={{
           display: "flex",
-          gap: "24px",
+          gap: 24,
           justifyContent: "center",
           margin: "24px 0",
         }}
       >
-        {/* 1. The Captured Liveness Frame */}
         <div style={{ textAlign: "center" }}>
           <p
             style={{
-              fontSize: "12px",
+              fontSize: 12,
               fontWeight: "bold",
-              marginBottom: "8px",
+              marginBottom: 8,
               color: "#667085",
             }}
           >
-            LIVE LIVENESS FRAME
+            LIVE FRAME
           </p>
           {selfieFile ? (
             <img
               src={URL.createObjectURL(selfieFile)}
-              alt="Live Liveness"
+              alt="Live"
               style={{
-                width: "140px",
-                height: "140px",
+                width: 140,
+                height: 140,
                 objectFit: "cover",
-                borderRadius: "12px",
+                borderRadius: 12,
                 border: "2px solid #F59E0B",
               }}
             />
           ) : (
             <div
               style={{
-                width: "140px",
-                height: "140px",
+                width: 140,
+                height: 140,
                 background: "#f1f5f9",
-                borderRadius: "12px",
+                borderRadius: 12,
                 display: "grid",
                 placeItems: "center",
-                fontSize: "12px",
+                fontSize: 12,
                 color: "#64748b",
               }}
             >
-              No frame captured
+              No frame
             </div>
           )}
         </div>
-
-        {/* 2. The Database Image */}
         <div style={{ textAlign: "center" }}>
           <p
             style={{
-              fontSize: "12px",
+              fontSize: 12,
               fontWeight: "bold",
-              marginBottom: "8px",
+              marginBottom: 8,
               color: "#667085",
             }}
           >
-            DATABASE RECORD
+            DOCUMENT PHOTO
           </p>
-          <img
-            src={dbImageSrc}
-            alt="Database Record"
-            style={{
-              width: "140px",
-              height: "140px",
-              objectFit: "cover",
-              borderRadius: "12px",
-              border: "2px solid #e2e8f0",
-            }}
-          />
+          {docResult.face_image_b64 ? (
+            <img
+              src={`data:image/jpeg;base64,${docResult.face_image_b64}`}
+              alt="Document"
+              style={{
+                width: 140,
+                height: 140,
+                objectFit: "cover",
+                borderRadius: 12,
+                border: "2px solid #e2e8f0",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 140,
+                height: 140,
+                background: "#f1f5f9",
+                borderRadius: 12,
+                display: "grid",
+                placeItems: "center",
+                fontSize: 12,
+                color: "#64748b",
+              }}
+            >
+              No face on doc
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Status / Result */}
-      <div style={{ textAlign: "center", minHeight: "40px" }}>
+      <div style={{ textAlign: "center", minHeight: 40 }}>
         {busy && (
           <p style={{ fontWeight: "bold", color: "#F59E0B" }}>
             Matching faces...
           </p>
         )}
-
         {result && result.verified && (
           <p style={{ fontWeight: "bold", color: "#065f46" }}>
             ✅ Match Confirmed (Distance: {result.distance.toFixed(4)})
           </p>
         )}
-
         {error && <p className="error">{error}</p>}
       </div>
     </section>
