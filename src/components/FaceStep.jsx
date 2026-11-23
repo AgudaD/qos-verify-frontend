@@ -8,7 +8,6 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
 
   useEffect(() => {
     let cancelled = false;
-
     (async () => {
       setBusy(true);
       setError("");
@@ -16,7 +15,6 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
         const res = await verifyFace(docResult.face_image_b64, selfieFile);
         if (cancelled) return;
         setResult(res);
-
         if (!res.verified) {
           setError("Face does not match the document. Access denied.");
           return;
@@ -29,7 +27,6 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
         if (!cancelled) setBusy(false);
       }
     })();
-
     return () => {
       cancelled = true;
     };
@@ -62,34 +59,17 @@ export default function FaceStep({ docResult, selfieFile, onDone }) {
           >
             LIVE FRAME
           </p>
-          {selfieFile ? (
-            <img
-              src={URL.createObjectURL(selfieFile)}
-              alt="Live"
-              style={{
-                width: 140,
-                height: 140,
-                objectFit: "cover",
-                borderRadius: 12,
-                border: "2px solid #F59E0B",
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: 140,
-                height: 140,
-                background: "#f1f5f9",
-                borderRadius: 12,
-                display: "grid",
-                placeItems: "center",
-                fontSize: 12,
-                color: "#64748b",
-              }}
-            >
-              No frame
-            </div>
-          )}
+          <img
+            src={URL.createObjectURL(selfieFile)}
+            alt="Live"
+            style={{
+              width: 140,
+              height: 140,
+              objectFit: "cover",
+              borderRadius: 12,
+              border: "2px solid #F59E0B",
+            }}
+          />
         </div>
         <div style={{ textAlign: "center" }}>
           <p
