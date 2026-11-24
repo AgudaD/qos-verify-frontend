@@ -18,10 +18,17 @@ const FIELD_LABELS = {
 };
 
 function faceVerdict({ distance, verified }) {
-  if (verified && distance < 0.55)
+  // 1. If the backend says it's a match, but the distance is high, send to review.
+  if (verified && distance > 0.6) {
+    return { tone: "review", label: "Manual review required" };
+  }
+
+  // 2. If the backend says it's a match, and the distance is good, pass.
+  if (verified) {
     return { tone: "pass", label: "Match confirmed" };
-  if (verified || distance <= 0.65)
-    return { tone: "review", label: "Inconclusive — manual review" };
+  }
+
+  // 3. If the backend says it's NOT a match (distance > 0.65), fail.
   return { tone: "fail", label: "No match" };
 }
 
@@ -29,16 +36,13 @@ export default function ResultStep({ docResult, faceResult, onRestart }) {
   const [showDetails, setShowDetails] = useState(false);
 
   const verdict = faceVerdict(faceResult);
-  const overallTone = faceResult.verified
-    ? verdict.tone === "review"
-      ? "review"
-      : "pass"
-    : "fail";
+  const overallTone = verdict.tone;
+
   const overallLabel =
     overallTone === "pass"
       ? "Identity Verified"
       : overallTone === "review"
-        ? "Manual Review"
+        ? "Manual Review Required"
         : "Verification Failed";
 
   const fields = docResult.fields || {};

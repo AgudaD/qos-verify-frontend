@@ -47,7 +47,18 @@ export default function LivenessStep({ onDone }) {
       <h2>2. Liveness Check</h2>
       <p className="muted">Follow the on-screen prompts.</p>
 
-      <LivenessCheck numberOfChallenge={3} onComplete={handleComplete} />
+      <LivenessCheck
+        numberOfChallenge={3}
+        onComplete={handleComplete}
+        theme={{
+          primary: "#F59E0B",
+          primaryText: "#ffffff",
+          secondary: "#FCD34D",
+          background: "#ffffff",
+          text: "#1a1a1a",
+          textColor: "#1a1a1a",
+        }}
+      />
 
       {busy && (
         <p style={{ fontWeight: "bold", color: "#F59E0B", marginTop: 16 }}>
